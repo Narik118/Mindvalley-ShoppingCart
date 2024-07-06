@@ -21,9 +21,12 @@ defmodule BackendWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", BackendWeb do
-  #   pipe_through :api
-  # end
+  scope "/api/v1", BackendWeb do
+    pipe_through :api
+
+    get "/inventory", Inventory.InventoryController, :get_inventory
+    post "/checkout", Inventory.InventoryController, :update_inventory
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:backend, :dev_routes) do

@@ -12,6 +12,7 @@ defmodule BackendWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug CORSPlug, origin: "http://localhost:8080"
   end
 
   scope "/", BackendWeb do
@@ -26,6 +27,7 @@ defmodule BackendWeb.Router do
 
     get "/inventory", Inventory.InventoryController, :get_inventory
     post "/checkout", Inventory.InventoryController, :update_inventory
+    options "/checkout", Inventory.InventoryController, :update_inventory
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

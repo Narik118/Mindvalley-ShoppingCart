@@ -31,29 +31,44 @@ defmodule BackendWeb.Inventory.InventoryController do
   def update_inventory(conn, _params) do
     cart_items = conn.params["_json"]
 
-    with :ok <- validate_cart_items(cart_items),
-         {:ok, _} <- InventoryAdapter.update_inventory_quantities(cart_items) do
-      resp = %{error: "Inventory Updated Sucessfully"}
+    case validate_cart_items(cart_items) do
+      :ok ->
+        case InventoryAdapter.update_inventory_quantities(cart_items) do
+          {:ok, _result} ->
+            resp = %{message: "Inventory Updated Successfully"}
+            conn
+            |> put_status(200)
+            |> json(resp)
 
-      conn
-      |> put_status(:bad_request)
-      |> json(resp)
-    else
-      {:error, error_message} ->
-        resp = %{error: error_message}
+          {:error, {:inv, product_id}} ->
+            resp = %{error: "Product (id: #{inspect(product_id)}) out of stock"}
+            conn
+              |> put_status(:bad_request)
+              |> json(resp)
 
-        conn
-        |> put_status(:bad_request)
-        |> json(resp)
+          {:error, error_message} ->
+            resp = %{error: error_message}
+            conn
+            |> put_status(:bad_request)
+            |> json(resp)
 
-      {:err_multi, _failed_operation, _failed_value, _changes_so_far} ->
-        resp = %{error: "Updating Inventory Failed"}
+          _ ->
+            resp = %{error: "Updating Inventory Failed"}
+            conn
+            |> put_status(:bad_request)
+            |> json(resp)
+        end
 
+      :error ->
+        resp = %{error: "Invalid cart items format"}
         conn
         |> put_status(:bad_request)
         |> json(resp)
     end
   end
+
+
+
 
   # validations for the payload - can be extended using a struct to validate
   defp validate_cart_items(nil), do: {:error, "Payload missing"}
@@ -68,8 +83,8 @@ defmodule BackendWeb.Inventory.InventoryController do
 
   defp validate_cart_items(_), do: {:error, "Invalid payload format"}
 
-  defp valid_item?(%{"id" => _, "name" => _, "quantity" => _} = item) do
-    Map.keys(item) == ["id", "name", "quantity"]
+  defp valid_item?(%{"id" => _, "price" => _, "quantity" => _} = item) do
+    Map.keys(item) == ["id", "price", "quantity"]
   end
 
   defp valid_item?(_), do: false

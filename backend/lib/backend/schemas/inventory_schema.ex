@@ -14,7 +14,7 @@ defmodule Backend.Schemas.InventorySchema do
     field :width, :decimal
     field :height, :decimal
     field :rating, :decimal
-    field :status, Ecto.Enum, values: [:out_of_stock, :avaiable]
+    field :status, Ecto.Enum, values: [:out_of_stock, :available]
 
     timestamps()
   end

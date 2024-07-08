@@ -59,8 +59,8 @@ defmodule BackendWeb.Inventory.InventoryController do
             |> json(resp)
         end
 
-      :error ->
-        resp = %{error: "Invalid cart items format"}
+      {:error, message} ->
+        resp = %{error: message}
         conn
         |> put_status(:bad_request)
         |> json(resp)

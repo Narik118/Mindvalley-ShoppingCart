@@ -26,7 +26,7 @@ defmodule BackendWeb.Router do
     pipe_through :api
 
     get "/inventory", Inventory.InventoryController, :get_inventory
-    post "/checkout", Inventory.InventoryController, :update_inventory
+    put "/checkout", Inventory.InventoryController, :update_inventory
     options "/checkout", Inventory.InventoryController, :update_inventory
   end
 

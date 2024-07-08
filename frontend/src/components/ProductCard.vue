@@ -2,7 +2,7 @@
   <div class="ProductCard">
     <img :src="product.product_image" :alt="product.name" class="w-full h-auto object-contain">
     <div class="p-4">
-      <h3 class="text-lg font-semibold">{{ product.name }}</h3>
+      <h3 class="text-lg font-Grotesk-Medium">{{ product.name }}</h3>
       <p class="text-sm text-gray-800">${{ product.price }}</p>
       <button 
         @click="handleAddToCart"

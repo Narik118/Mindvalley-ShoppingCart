@@ -43,7 +43,7 @@ defmodule BackendWeb.Inventory.InventoryController do
           {:error, {:inv, product_id}} ->
             resp = %{error: "Product (id: #{inspect(product_id)}) out of stock"}
             conn
-              |> put_status(:bad_request)
+              |> put_status(400)
               |> json(resp)
 
           {:error, error_message} ->

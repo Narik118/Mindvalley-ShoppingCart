@@ -19,72 +19,41 @@ defmodule Backend.Adapters.Inventory.InventoryAdapter do
     |> Repo.all()
   end
 
+
   def update_inventory_quantities(cart_items) do
+    IO.inspect(cart_items)
+
     multi =
       Enum.reduce(cart_items, Ecto.Multi.new(), fn cart_item, multi ->
         product_id = cart_item["id"]
         quantity_change = cart_item["quantity"]
 
-        case Repo.get(InventorySchema, product_id) do
-          nil ->
-            # Product not found, return an error tuple
-            {:error, "Product not found with id #{product_id}"}
+        check_operation = "check_#{product_id}" |> String.to_atom()
+        update_operation = "update_#{product_id}" |> String.to_atom()
 
-          product ->
-            current_quantity = product.quantity
+        multi
+        |> Ecto.Multi.run(check_operation, fn _repo, _changes ->
+          product = Repo.get!(InventorySchema, product_id)
 
-            if current_quantity < quantity_change do
-              # If current quantity is less than quantity to deduct, return an error tuple
-              {:error, {:inv, product_id}}
-            else
-              # Proceed with updating the quantity
-              changeset =
-                Ecto.Changeset.change(product, %{quantity: current_quantity - quantity_change})
-
-              Ecto.Multi.update(multi, "update_#{product_id}", changeset)
-            end
-        end
+          if product.quantity >= quantity_change do
+            {:ok, product}
+          else
+            {:error, "Insufficient quantity for product ID #{product_id}"}
+          end
+        end)
+        |> Ecto.Multi.update(update_operation, fn changes ->
+          product = Map.get(changes, check_operation)
+          Ecto.Changeset.change(product, quantity: product.quantity - quantity_change)
+        end)
       end)
 
-    case multi do
-      {:error, reason} ->
-        {:error, reason}
+    case Repo.transaction(multi) do
+      {:ok, _} ->
+        {:ok, "Inventory quantities updated successfully"}
 
-      multi ->
-        case Repo.transaction(multi) do
-          {:ok, _} ->
-            {:ok, "Inventory quantities updated successfully"}
-
-          {:error, _} ->
-            # Handle transaction error
-            {:error, "Failed to update inventory quantities"}
-        end
+      {:error, _failed_operation, failed_value, _changes_so_far} ->
+        {:error, failed_value}
     end
   end
 
-  # def update_inventory_quantities(cart_items) do
-  #   IO.inspect(cart_items)
-  #   multi =
-  #     Enum.reduce(cart_items, Ecto.Multi.new(), fn cart_item, multi ->
-  #       product_id = cart_item["id"]
-  #       quantity_change = cart_item["quantity"]
-
-  #       changeset_fun = fn product ->
-  #         Ecto.Changeset.change(product, quantity: product.quantity - quantity_change)
-  #       end
-
-  #       product = Repo.get!(InventorySchema, product_id)
-  #       changeset = changeset_fun.(product)
-
-  #       Ecto.Multi.update(multi, "update_#{product_id}", changeset)
-  #     end)
-
-  #   case Repo.transaction(multi) do
-  #     {:ok, _} ->
-  #       {:ok, "Inventory quantities updated successfully"}
-
-  #     {:err_multi, _failed_operation, _failed_value, _changes_so_far} ->
-  #       {:error, "Failed to update inventory quantities"}
-  #   end
-  # end
 end

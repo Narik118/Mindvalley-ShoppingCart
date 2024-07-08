@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- Product List -->
     <h1 class="text-2xl font-semibold mb-4">Product List</h1>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       <ProductCard
@@ -24,7 +25,10 @@
         <div v-else>
           <div v-for="product in cartProducts" :key="product.id" class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-4">
-              <img :src="product.product_image" :alt="product.imageAlt" class="w-16 h-16 object-contain rounded-md border border-gray-200">
+              <!-- Image Container -->
+              <div class="w-16 h-16">
+                <img :src="product.product_image" :alt="product.imageAlt" class="w-full h-full object-contain rounded-md border border-gray-200">
+              </div>
               <div>
                 <p class="text-lg font-medium text-gray-900 truncate">{{ product.name }}</p>
                 <p class="text-sm text-gray-500">Price: {{ product.price }}</p>
@@ -72,6 +76,13 @@
         <p>Checkout successful! Thank you for your purchase.</p>
       </div>
     </transition>
+
+    <!-- Error Notification -->
+    <transition name="fade">
+      <div v-if="checkoutError" class="fixed bottom-4 right-4 bg-red-500 text-white py-2 px-4 rounded-lg shadow-md">
+        <p>{{ checkoutErrorMessage }}</p>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -102,7 +113,6 @@ export default {
       return '0.00';
     },
     checkout() {
-      // Prepare data for POST request
       const checkoutData = this.cartProducts.map(product => {
         return {
           id: product.id,
@@ -111,15 +121,14 @@ export default {
         };
       });
 
-      // Make POST request
       this.postCheckoutData(checkoutData);
     },
     postCheckoutData(data) {
-      const apiUrl = 'http://localhost:4000/api/v1/checkout'; // Replace with your API endpoint
+      const apiUrl = 'http://localhost:4000/api/v1/checkout';
       axios.post(apiUrl, data)
         .then(response => {
           console.log('Checkout successful:', response.data);
-          this.clearCart(); // Clear cart after successful checkout
+          this.clearCart();
           this.showCartPanel = false;
           this.showCheckoutSuccess();
         })
@@ -174,7 +183,7 @@ h1 {
   text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
-  font-family: 'Roboto Slab', serif;
+  font-family: 'Grotesk-Bold', serif;
   color: #333;
 }
 
@@ -209,5 +218,11 @@ button[disabled] {
 
 .fade-enter, .fade-leave-to {
   opacity: 0;
+}
+
+/* Additional CSS for image container */
+.w-16.h-16 {
+  width: 4rem; /* Adjust as needed */
+  height: 4rem; /* Adjust as needed */
 }
 </style>

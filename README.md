@@ -28,7 +28,7 @@ You should see the application running on http://localhost:8080/
 * We are using tailwind to style our compoennets
 * There is also a toast to indicate weather the checkout was successfull or not (could have been a seperate component !)
 
-## features
+## Features
 * We can view products
 * We can add products in cart
 * We can increase and decrese quantity of products in cart

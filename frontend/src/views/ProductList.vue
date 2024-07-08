@@ -125,7 +125,7 @@ export default {
     },
     postCheckoutData(data) {
       const apiUrl = 'http://localhost:4000/api/v1/checkout';
-      axios.post(apiUrl, data)
+      axios.put(apiUrl, data)
         .then(response => {
           console.log('Checkout successful:', response.data);
           this.clearCart();
@@ -133,8 +133,8 @@ export default {
           this.showCheckoutSuccess();
         })
         .catch(error => {
-          console.error('Error during checkout:', error);
-          this.showCheckoutError(error.message || 'Checkout failed. Please try again.');
+          console.error('Error during checkout:', error.response.data);
+          this.showCheckoutError(error.response.data.error || error.message || 'Checkout failed. Please try again.');
         });
     },
     showCheckoutSuccess() {

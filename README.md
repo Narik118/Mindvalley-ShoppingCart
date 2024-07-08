@@ -14,7 +14,9 @@ cd into the backend folder and execute
 ### Inside frontend folder
 
 cd into the frontend folder and execute
-- npm run serve 
+- npm run serve
+
+You should see the application running on http://localhost:8080/
 
 # Design
 ## Frontend

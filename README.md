@@ -14,7 +14,9 @@ cd into the backend folder and execute
 ### Inside frontend folder
 
 cd into the frontend folder and execute
-- npm run serve 
+- npm run serve
+
+You should see the application running on http://localhost:8080/
 
 # Design
 ## Frontend
@@ -26,7 +28,7 @@ cd into the frontend folder and execute
 * We are using tailwind to style our compoennets
 * There is also a toast to indicate weather the checkout was successfull or not (could have been a seperate component !)
 
-## features
+## Features
 * We can view products
 * We can add products in cart
 * We can increase and decrese quantity of products in cart

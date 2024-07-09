@@ -22,11 +22,10 @@ You should see the application running on http://localhost:8080/
 ## Frontend
 
 * We are using vuex to manage the state aof prodcuts and the cart
-* We have 2 components NavigationCompontnt.vue and the ProductCard.vue 
-* We have view component ProductList.vue which uses these two compoenents to display the list of products and the cart
-* I would have used another compoenent for the cart but time did not permit !!
+* We have 4 components NavigationCompontnt.vue, ProductCard.vue, ToastMessage.vue, CartList.vue
+* We have view component ProductList.vue which uses these compoenents to display the list of products and the cart
 * We are using tailwind to style our compoennets
-* There is also a toast to indicate weather the checkout was successfull or not (could have been a seperate component !)
+* There is also a toast to indicate weather the checkout was successfull or not
 
 ## Features
 * We can view products
